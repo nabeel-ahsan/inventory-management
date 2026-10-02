@@ -1,0 +1,42 @@
+# @InventoryManagement.Api_HostAddress = http://localhost:5172
+
+GET http://localhost:5172/api/product/getallproducts
+Accept: application/json
+
+// why is everything capital in route? because the route is defined in the controller with capital letters. The route is defined as [Route("api/[controller]/[action]")], which means that the controller name and action name will be used to generate the route. The controller name is ProductController, so the route will be /api/Product/GetAllProducts. The action name is GetAllProducts, so the route will be /api/Product/GetAllProducts.
+// is it fine if the route is defined in the controller with capital letters? Yes, it is fine. The route is case-insensitive, so it will work regardless of the case used in the URL. However, it is a good practice to use lowercase letters in URLs for consistency and readability.
+// how to use lowercase letters in URLs? You can use lowercase letters in the route by defining the route in the controller with lowercase letters. For example, you can define the route as [Route("api/[controller]/[action]")], which will generate the route /api/product/getallproducts.
+
+# {
+#   // 1. Give text breathing room. Standard line height is too tight on 2K.
+#   "editor.fontSize": 14,
+#   "editor.lineHeight": 24, 
+
+#   // 2. Tweak anti-aliasing so fonts look smooth, not jagged.
+#   "workbench.fontAliasing": "antialiased",
+
+#   // 3. Make the cursor stand out without flashing aggressively.
+#   "editor.cursorBlinking": "smooth",
+#   "editor.cursorSmoothCaretAnimation": "on",
+
+#   // 4. Slightly dim the sidebar/activity bar so focus stays purely on code.
+#   "workbench.colorCustomizations": {
+#     "sideBar.background": "#181825",
+#     "activityBar.background": "#11111b"
+#   }
+# }
+
+
+###
+
+// Post
+POST http://localhost:5172/api/product/addproduct
+Content-Type: application/json
+
+{
+  "name": "Test Product",
+  "description": "This is a test product.",
+  "price": 19.99,
+  "stockQuantity": 100,
+  "categoryId": "4AC14E37-02DD-47E3-BD29-46A76E4A5D32"
+}
