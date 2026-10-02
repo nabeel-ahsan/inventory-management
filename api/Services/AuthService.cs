@@ -12,16 +12,19 @@ namespace InventoryManagement.Api.Services;
 public class AuthService : IAuthService
 {
     private readonly IAuthRepository _repository;
+    private readonly ICategoryRepository _categoryRepository;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IConfiguration _config;
 
     public AuthService(
         IAuthRepository authRepository,
+        ICategoryRepository categoryRepository,
         IPasswordHasher<User> passwordHasher,
         IConfiguration config
     )
     {
         _repository = authRepository;
+        _categoryRepository = categoryRepository;
         _passwordHasher = passwordHasher;
         _config = config;
     }
