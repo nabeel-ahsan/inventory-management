@@ -29,7 +29,7 @@ public class AuthService : IAuthService
         _config = config;
     }
 
-    public async Task<(int, AuthResponseDto?)> RegisterUserAsync(RegisterDto dto)
+    public async Task<(int, RegisterResponseDto?)> RegisterUserAsync(RegisterDto dto)
     {
         if (dto.Email == null || dto.Password == null)
             return (400, null);
@@ -44,11 +44,11 @@ public class AuthService : IAuthService
             return (403, null);
 
         var token = GenerateJwtToken(newUser);
-        var responseDto = new AuthResponseDto(token, newUser.Username, newUser.Email, newUser.Role);
+        var responseDto = new RegisterResponseDto(newUser.Username, newUser.Email);
         return (201, responseDto);
     }
 
-    public async Task<(int ,AuthResponseDto?)> LoginUserAsync(LoginDto dto)
+    public async Task<(int ,LoginResponseDto?)> LoginUserAsync(LoginDto dto)
     {
         if (dto.Email == null || dto.Password == null)
             return (400, null);
@@ -79,7 +79,7 @@ public class AuthService : IAuthService
         else
         {
             var token = GenerateJwtToken(exisitingUser);
-            var responseDto = new AuthResponseDto(token, exisitingUser.Username, exisitingUser.Email, exisitingUser.Role);
+            var responseDto = new LoginResponseDto(token, exisitingUser.Username, exisitingUser.Email);
             return (201, responseDto);
         }
     }
@@ -90,8 +90,7 @@ public class AuthService : IAuthService
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role.ToString())
+            new Claim(ClaimTypes.Email, user.Email)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Secret"]!));

@@ -5,6 +5,6 @@ namespace InventoryManagement.Api.Interfaces;
 
 public interface IAuthService
 {
-    Task<(int, AuthResponseDto?)> RegisterUserAsync(RegisterDto dto);
-    Task<(int ,AuthResponseDto?)> LoginUserAsync(LoginDto dto);
+    Task<(int, RegisterResponseDto?)> RegisterUserAsync(RegisterDto dto);
+    Task<(int ,LoginResponseDto?)> LoginUserAsync(LoginDto dto);
 }
