@@ -15,10 +15,12 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    public async Task<(IEnumerable<Product> data, int totalCount)> GetProducts(ProductQueryParameters queryParameters)
+    public async Task<(IEnumerable<Product> data, int totalCount)> GetProducts(
+        ProductQueryParameters queryParameters
+    )
     {
         IQueryable<Product> query = _context.Products;
-        query = query.Where(p => p.IsActive); 
+        query = query.Where(p => p.IsActive);
 
         if (!string.IsNullOrWhiteSpace(queryParameters.SearchTerm))
         {
@@ -65,10 +67,11 @@ public class ProductRepository : IProductRepository
         return (items, totalCount);
     }
 
-    public async Task<Product> GetById(Guid id)
+    public async Task<Product?> GetById(Guid id)
     {
-        
-        var result = await _context.Products.Where(p=>p.IsActive).FirstOrDefaultAsync(p => p.Id == id);
+        var result = await _context
+            .Products.Where(p => p.IsActive)
+            .FirstOrDefaultAsync(p => p.Id == id);
         return result;
     }
 
@@ -79,9 +82,11 @@ public class ProductRepository : IProductRepository
         return product;
     }
 
-    public async Task<Product> UpdateProduct(Product product)
+    public async Task<Product?> UpdateProduct(Product product)
     {
-        var existingProduct = await _context.Products.Where(p=>p.IsActive).FirstOrDefaultAsync(p => p.Id == product.Id);
+        var existingProduct = await _context
+            .Products.Where(p => p.IsActive)
+            .FirstOrDefaultAsync(p => p.Id == product.Id);
 
         if (existingProduct != null)
         {
@@ -94,7 +99,9 @@ public class ProductRepository : IProductRepository
 
     public async Task<bool> DeleteProduct(Guid id)
     {
-        var existingProduct = await _context.Products.Where(p=>p.IsActive).FirstOrDefaultAsync(p => p.Id == id);
+        var existingProduct = await _context
+            .Products.Where(p => p.IsActive)
+            .FirstOrDefaultAsync(p => p.Id == id);
         if (existingProduct == null)
             return false;
 
@@ -104,9 +111,11 @@ public class ProductRepository : IProductRepository
         return true;
     }
 
-    public async Task<Product> IncreaseStock(Guid id, int stockQuantity)
+    public async Task<Product?> IncreaseStock(Guid id, int stockQuantity)
     {
-        var existingProduct = await _context.Products.Where(p=>p.IsActive).FirstOrDefaultAsync(p => p.Id == id);
+        var existingProduct = await _context
+            .Products.Where(p => p.IsActive)
+            .FirstOrDefaultAsync(p => p.Id == id);
 
         if (existingProduct == null)
             return null;
@@ -117,16 +126,17 @@ public class ProductRepository : IProductRepository
         return existingProduct;
     }
 
-    public async Task<Product> DecreaseStock(Guid id, int stockQuantity)
+    public async Task<Product?> DecreaseStock(Guid id, int stockQuantity)
     {
-        var existingProduct = await _context.Products.Where(p=>p.IsActive).FirstOrDefaultAsync(p => p.Id == id);
 
-        if (existingProduct == null)
-            return null;
+        int rowsAffected = await _context
+            .Products.Where(p => p.IsActive==true && p.Id == id && p.StockQuantity >= stockQuantity)
+            .ExecuteUpdateAsync(s => s.SetProperty(p => p.StockQuantity, p => p.StockQuantity - stockQuantity));
 
-        existingProduct.StockQuantity -= stockQuantity;
-        _context.Products.Update(existingProduct);
-        await _context.SaveChangesAsync();
-        return existingProduct;
+        if (rowsAffected > 0)
+        {
+            return await _context.Products.FirstOrDefaultAsync(p=>p.Id == id);
+        }
+        return null;
     }
 }
